@@ -1,0 +1,43 @@
+## Projekt-spezifisch
+/log/
+/*.jpage
+/.settings
+/.classpath
+/.project
+/target
+
+## Applikation
+**/log
+**/logs
+**/*.log
+output/
+
+## Java
+*.class
+*.war
+*.ear
+hs_err_pid* 
+
+## Eclipse
+.metadata
+**/bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.externalToolBuilders/
+
+## Gradle
+.gradle
+gradle-app.setting
+build/
+/test-output/
+/.settings/gradle
+
+## OS Specific
+.DS_Store
+**/.DS_Store
+/bin/
