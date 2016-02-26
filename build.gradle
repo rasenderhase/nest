@@ -1,8 +1,10 @@
 apply plugin: 'java'
-apply plugin: 'war'
-apply plugin: 'eclipse-wtp'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
 
-sourceCompatibility = '1.8'
+group = theGroup
+version = theVersion
+sourceCompatibility = theSourceCompatibility
 
 eclipse {
 	classpath {
@@ -11,7 +13,6 @@ eclipse {
 	}
 }
 
-version = '1.0'
 jar {
 	manifest {
 		attributes 'Implementation-Title': 'nest NikEm STack',
@@ -24,9 +25,9 @@ repositories {
 }
 
 dependencies {
-	providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
-	providedCompile 'javax.servlet.jsp:javax.servlet.jsp-api:2.3.0'
-	providedCompile 'javax.websocket:javax.websocket-api:1.1'
+	compile 'javax.servlet:javax.servlet-api:3.1.0'
+	compile 'javax.servlet.jsp:javax.servlet.jsp-api:2.3.0'
+	compile 'javax.websocket:javax.websocket-api:1.1'
 	compile 'javax.servlet:jstl:1.2'
 	compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.22.2'
 	compile('org.glassfish.jersey.ext:jersey-mvc-jsp:2.22.2') {
