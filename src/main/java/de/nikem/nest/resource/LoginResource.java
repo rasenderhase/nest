@@ -16,7 +16,7 @@ public class LoginResource {
 	@GET
 	@Produces("text/html")
 	public Object login() {
-		return new ViewableFactory(request).createViewable("/nest/login");
+		return new ViewableFactory(request).createViewable("/nest/login", null, "login");
 	}
 	
 	@Path("/failed")
