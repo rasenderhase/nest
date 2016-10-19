@@ -1,6 +1,8 @@
 package de.nikem.nest.resource;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -21,7 +23,9 @@ public class LoginResource {
 	@Path("/dologin")
 	@Produces("text/html")
 	public Object doLogin() {
-		return new ViewableFactory(request).createViewable("/nest/dologin", null, "login");
+		Map<String, Object> model = new HashMap<>();
+		model.put("title", "Login");
+		return new ViewableFactory(request).createViewable("/nest/dologin", model, "login");
 	}
 	
 	@GET

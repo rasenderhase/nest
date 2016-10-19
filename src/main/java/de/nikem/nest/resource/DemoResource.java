@@ -21,7 +21,7 @@ public class DemoResource {
 	public Object index() {
 		Map<String, Object> model = new HashMap<>();
 		model.put("datetime", new Date());
-
+		model.put("title", "Demo");
 		return new ViewableFactory(request).createViewable("/nest/demo/demo", model, "demo");
 	}
 }
