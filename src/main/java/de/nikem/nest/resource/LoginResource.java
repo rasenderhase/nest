@@ -12,6 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import de.nikem.nest.util.LocalizationContextManager;
 import de.nikem.nest.web.layout.ViewableFactory;
 
 @Path("/nest")
@@ -23,6 +24,7 @@ public class LoginResource {
 	@Path("/dologin")
 	@Produces("text/html")
 	public Object doLogin() {
+		new LocalizationContextManager().setLocalizationContext(request);
 		Map<String, Object> model = new HashMap<>();
 		model.put("title", "Login");
 		return new ViewableFactory(request).createViewable("/nest/dologin", model, "login");
@@ -32,6 +34,7 @@ public class LoginResource {
 	@Path("/login")
 	@Produces("text/html")
 	public Object login() {
+		new LocalizationContextManager().setLocalizationContext(request);
 		final URI location;
 		location = UriBuilder.fromPath(request.getContextPath() + "/rest/nest/index").build();
 		return Response.seeOther(location).build();

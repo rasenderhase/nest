@@ -12,6 +12,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import de.nikem.nest.util.LocalizationContextManager;
+
 @Path("/logout")
 public class LogoutResource {
 	@Context HttpServletRequest request;
@@ -26,6 +28,8 @@ public class LogoutResource {
 		if (session != null) {
 			session.invalidate();
 		}
+
+		new LocalizationContextManager().setLocalizationContext(request);
 		
 		String referer = httpHeaders.getHeaderString("referer");
 		
