@@ -56,7 +56,10 @@ public class Messages {
 	}
 	
 	public String getMessage(String key, Object...params) {
-		LocalizationContext locCtxt = (LocalizationContext) Config.get(request, Config.FMT_LOCALIZATION_CONTEXT);
+		LocalizationContext locCtxt = (LocalizationContext) Config.get(((HttpServletRequest) request).getSession(false), Config.FMT_LOCALIZATION_CONTEXT);
+		if (locCtxt == null) {
+			locCtxt = (LocalizationContext) Config.get(request, Config.FMT_LOCALIZATION_CONTEXT);
+		}
 		String message = locCtxt.getResourceBundle().getString(key);
 		return MessageFormat.format(message, params);
 	}
