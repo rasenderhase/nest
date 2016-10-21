@@ -12,12 +12,18 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import de.nikem.nest.util.LocalizationContextManager;
+import de.nikem.nest.filter.BeanFactory;
+import de.nikem.nest.util.Messages;
 
 @Path("/logout")
 public class LogoutResource {
 	@Context HttpServletRequest request;
 	@Context HttpHeaders httpHeaders;
+	private Messages messages;
+	
+	public LogoutResource() {
+		setMessages(BeanFactory.get().getMessages());
+	}
 	
 	@GET
 	@Produces("text/html")
@@ -29,9 +35,9 @@ public class LogoutResource {
 			session.invalidate();
 		}
 
-		new LocalizationContextManager().setLocalizationContext(request);
+		getMessages().initLocalizationContext();
 		
-		String referer = httpHeaders.getHeaderString("referer");
+		String referer = getHttpHeaders().getHeaderString("referer");
 		
 		final URI location;
 		if (referer == null) {
@@ -49,5 +55,21 @@ public class LogoutResource {
 
 	public void setRequest(HttpServletRequest request) {
 		this.request = request;
+	}
+
+	public Messages getMessages() {
+		return messages;
+	}
+
+	public void setMessages(Messages messages) {
+		this.messages = messages;
+	}
+
+	public HttpHeaders getHttpHeaders() {
+		return httpHeaders;
+	}
+
+	public void setHttpHeaders(HttpHeaders httpHeaders) {
+		this.httpHeaders = httpHeaders;
 	}
 }

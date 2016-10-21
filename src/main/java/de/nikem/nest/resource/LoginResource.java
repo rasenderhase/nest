@@ -12,19 +12,25 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import de.nikem.nest.util.LocalizationContextManager;
+import de.nikem.nest.filter.BeanFactory;
+import de.nikem.nest.util.Messages;
 import de.nikem.nest.web.layout.ViewableFactory;
 
 @Path("/nest")
 public class LoginResource {
 	
 	@Context HttpServletRequest request;
+	private Messages messages;
+	
+	public LoginResource() {
+		setMessages(BeanFactory.get().getMessages());
+	}
 	
 	@GET
 	@Path("/dologin")
 	@Produces("text/html")
 	public Object doLogin() {
-		new LocalizationContextManager().setLocalizationContext(request);
+		getMessages().initLocalizationContext();
 		Map<String, Object> model = new HashMap<>();
 		model.put("title", "Login");
 		return new ViewableFactory(request).createViewable("/nest/dologin", model, "login");
@@ -34,7 +40,7 @@ public class LoginResource {
 	@Path("/login")
 	@Produces("text/html")
 	public Object login() {
-		new LocalizationContextManager().setLocalizationContext(request);
+		getMessages().initLocalizationContext();
 		final URI location;
 		location = UriBuilder.fromPath(request.getContextPath() + "/rest/nest/index").build();
 		return Response.seeOther(location).build();
@@ -45,5 +51,13 @@ public class LoginResource {
 	@Produces("text/plain")
 	public Object loginfailed() {
 		return "kein Zugriff";
+	}
+
+	public Messages getMessages() {
+		return messages;
+	}
+
+	public void setMessages(Messages messages) {
+		this.messages = messages;
 	}
 }

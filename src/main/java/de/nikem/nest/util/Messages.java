@@ -1,22 +1,33 @@
 package de.nikem.nest.util;
 
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.logging.Logger;
 
+import javax.inject.Inject;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 
-public class LocalizationContextManager {
+public class Messages {
 	private static final String BASENAMES = "de.nikem.nest.filter.NestFilter.basenames";
 	private Logger log = Logger.getLogger(getClass().getName(), "de.nikem.nest.texts");
+
+	@Inject ServletRequest request;
+	
+	public Messages() {
+	}
+	
+	public Messages(ServletRequest request) {
+		this.request = request;
+	}
 
 	/**
 	 * @param request
 	 */
-	public void setLocalizationContext(ServletRequest request) {
+	public void initLocalizationContext() {
 		final Locale locale = Locale.GERMAN;			//TODO: LocaleChooser
 		HttpSession session = ((HttpServletRequest) request).getSession(false);
 		
@@ -33,7 +44,7 @@ public class LocalizationContextManager {
 				}
 			}
 			
-			LocalizationContext locCtxt = new LocalizationContext(multipleResourceBundle);
+			LocalizationContext locCtxt = new LocalizationContext(multipleResourceBundle, locale);
 
 			if (session != null) {
 				Config.set(session, Config.FMT_LOCALIZATION_CONTEXT, locCtxt);
@@ -42,5 +53,20 @@ public class LocalizationContextManager {
 			Config.set(request, Config.FMT_LOCALIZATION_CONTEXT, locCtxt);
 			Config.set(request, Config.FMT_LOCALE, locale.toString());
 		}
+	}
+	
+	public String getMessage(String key, Object...params) {
+		LocalizationContext locCtxt = (LocalizationContext) Config.get(request, Config.FMT_LOCALIZATION_CONTEXT);
+		String message = locCtxt.getResourceBundle().getString(key);
+		return MessageFormat.format(message, params);
+	}
+
+	public ServletRequest getRequest() {
+		return request;
+	}
+
+	public Messages setRequest(ServletRequest request) {
+		this.request = request;
+		return this;
 	}
 }

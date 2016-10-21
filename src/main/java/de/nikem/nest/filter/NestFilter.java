@@ -9,9 +9,9 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 
-import de.nikem.nest.util.LocalizationContextManager;
-
+@WebFilter(urlPatterns={"/*"})
 public class NestFilter implements Filter {
 	private Logger log = Logger.getLogger(getClass().getName(), "de.nikem.nest.texts");
 	
@@ -22,8 +22,7 @@ public class NestFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		new LocalizationContextManager().setLocalizationContext(request);
-		
+		BeanFactory.get().getMessages().initLocalizationContext();
 		chain.doFilter(request, response);
 	}
 
