@@ -30,6 +30,7 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 	public void requestInitialized(ServletRequestEvent sre) {
 		log.fine("nest.filter.set_request_thread_local");
 		BeanFactory.SERVLET_REQUESTS.set(sre.getServletRequest());
+		BeanFactory.get().getMessages().initLocalizationContext();
 	}
 
 	@Override

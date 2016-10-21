@@ -30,7 +30,7 @@ public class LoginResource {
 	@Path("/dologin")
 	@Produces("text/html")
 	public Object doLogin() {
-		getMessages().initLocalizationContext();
+//		getMessages().initLocalizationContext();
 		Map<String, Object> model = new HashMap<>();
 		model.put("title", "Login");
 		return new ViewableFactory(request).createViewable("/nest/dologin", model, "login");
@@ -40,7 +40,6 @@ public class LoginResource {
 	@Path("/login")
 	@Produces("text/html")
 	public Object login() {
-		getMessages().initLocalizationContext();
 		final URI location;
 		location = UriBuilder.fromPath(request.getContextPath() + "/rest/nest/index").build();
 		return Response.seeOther(location).build();

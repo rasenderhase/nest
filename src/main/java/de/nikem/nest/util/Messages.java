@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 
@@ -29,9 +28,6 @@ public class Messages {
 	 */
 	public void initLocalizationContext() {
 		final Locale locale = Locale.GERMAN;			//TODO: LocaleChooser
-		HttpSession session = ((HttpServletRequest) request).getSession(false);
-		
-		if (Config.get(session, Config.FMT_LOCALIZATION_CONTEXT) == null || Config.get(session, Config.FMT_LOCALE) == null) {
 			MultipleResourceBundle multipleResourceBundle = new MultipleResourceBundle();
 			multipleResourceBundle.addResourceBundle("de.nikem.nest.texts", locale);
 			String raw = request.getServletContext().getInitParameter(BASENAMES);
@@ -46,13 +42,8 @@ public class Messages {
 			
 			LocalizationContext locCtxt = new LocalizationContext(multipleResourceBundle, locale);
 
-			if (session != null) {
-				Config.set(session, Config.FMT_LOCALIZATION_CONTEXT, locCtxt);
-				Config.set(session, Config.FMT_LOCALE, locale.toString());			
-			}
 			Config.set(request, Config.FMT_LOCALIZATION_CONTEXT, locCtxt);
 			Config.set(request, Config.FMT_LOCALE, locale.toString());
-		}
 	}
 	
 	public String getMessage(String key, Object...params) {

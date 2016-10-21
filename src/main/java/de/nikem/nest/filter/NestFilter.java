@@ -20,7 +20,6 @@ public class NestFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		BeanFactory.get().getMessages().initLocalizationContext();
 		chain.doFilter(request, response);
 	}
 

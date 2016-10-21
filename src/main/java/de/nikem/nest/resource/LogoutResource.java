@@ -35,8 +35,6 @@ public class LogoutResource {
 			session.invalidate();
 		}
 
-		getMessages().initLocalizationContext();
-		
 		String referer = getHttpHeaders().getHeaderString("referer");
 		
 		final URI location;
