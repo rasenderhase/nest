@@ -1,5 +1,6 @@
 package de.nikem.nest.filter;
 
+import java.net.URI;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -8,6 +9,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
+import javax.ws.rs.core.UriBuilder;
 
 import de.nikem.nest.util.Messages;
 
@@ -31,6 +33,10 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 		log.fine("nest.filter.set_request_thread_local");
 		BeanFactory.SERVLET_REQUESTS.set(sre.getServletRequest());
 		BeanFactory.get().getMessages().initLocalizationContext();
+		
+		String version = sre.getServletContext().getInitParameter("de.nikem.nest.filter.NestFilter.version");
+		URI staticPath = UriBuilder.fromPath(sre.getServletContext().getContextPath()).path("static").path("{version}").build(version);
+		sre.getServletRequest().setAttribute("staticContextPath", staticPath);
 	}
 
 	@Override
