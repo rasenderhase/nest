@@ -1,7 +1,10 @@
 package de.nikem.nest.filter;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -31,7 +34,7 @@ public class NestFilterTest  {
 		servletRequest = mock(HttpServletRequest.class);
 		
 		contextPath = "/nest";
-		requestURI = contextPath + "/scripts/1.0-SNAPSHOT/nest/nest.js";
+		requestURI = contextPath + "/static/1.0-SNAPSHOT/scripts/nest/nest.js";
 		
 		when(servletRequest.getRequestURI()).thenReturn(requestURI);
 		when(servletRequest.getContextPath()).thenReturn(contextPath);
@@ -39,24 +42,35 @@ public class NestFilterTest  {
 	}
 	
 	@Test
-	public void testDoFilter1() throws IOException, ServletException {
+	public void testDoFilterRemoveVersion() throws IOException, ServletException {
 		nestFilter.doFilter(servletRequest, null, filterChain);
 		
 		ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);
 		verify(servletRequest).getRequestDispatcher(pathCaptor.capture());
 		
-		assertEquals("/scripts/nest/nest.js", pathCaptor.getValue());
+		assertThat(pathCaptor.getValue(), is("/static/scripts/nest/nest.js"));
 	}
 	
 	@Test
-	public void testDoFilter2() throws IOException, ServletException {
-		requestURI = contextPath + "/scripts/nest/nest.js";
+	public void testDoFilterRemoveVersionPlaceholder() throws IOException, ServletException {
+		requestURI = contextPath + "/static/@version@/scripts/nest/nest.js";
+		when(servletRequest.getRequestURI()).thenReturn(requestURI);
 		
 		nestFilter.doFilter(servletRequest, null, filterChain);
 		
 		ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);
 		verify(servletRequest).getRequestDispatcher(pathCaptor.capture());
 		
-		assertEquals("/scripts/nest/nest.js", pathCaptor.getValue());
+		assertThat(pathCaptor.getValue(), is("/static/scripts/nest/nest.js"));
+	}
+	
+	@Test
+	public void testDoFilterNoVersion() throws IOException, ServletException {
+		requestURI = contextPath + "/static/scripts/nest/nest.js";
+		when(servletRequest.getRequestURI()).thenReturn(requestURI);
+		
+		nestFilter.doFilter(servletRequest, null, filterChain);
+		
+		verify(servletRequest, never()).getRequestDispatcher(any(String.class));
 	}
 }
