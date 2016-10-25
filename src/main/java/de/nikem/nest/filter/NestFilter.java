@@ -1,5 +1,7 @@
 package de.nikem.nest.filter;
 
+import static java.util.logging.Level.FINEST;
+
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -24,13 +26,11 @@ public class NestFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		String path = req.getRequestURI().substring(req.getContextPath().length());
 		if (path.matches("/static/\\d.*") || path.startsWith("/static/@version@/")) {
-			log.finest("nest.filter.original_static_content");
-			log.finest(path);
+			log.log(FINEST, "nest.filter.original_static_content", path);
 			int beginVersion = path.indexOf('/', 1);
 			int endVersion = path.indexOf('/', beginVersion + 1);
 			path = path.substring(0, beginVersion) + path.substring(endVersion);
-			log.finest("nest.filter.forward_static_content");
-			log.finest(path);
+			log.log(FINEST, "nest.filter.forward_static_content", path);
 			request.getRequestDispatcher(path).forward(request, response);
 		} else {
 			chain.doFilter(request, response);
