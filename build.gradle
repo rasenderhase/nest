@@ -32,6 +32,11 @@ task sourceJar(type: Jar) {
 jacoco {
     toolVersion = "0.7.4+"	//see https://www.mkyong.com/gradle/gradle-jacoco-incompatible-version-1006/
 }
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
 check.dependsOn jacocoTestReport
 
 repositories {
