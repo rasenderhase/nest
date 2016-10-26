@@ -23,9 +23,6 @@ public class Messages {
 		this.request = request;
 	}
 
-	/**
-	 * @param request
-	 */
 	public void initLocalizationContext() {
 		final Locale locale = Locale.GERMAN;			//TODO: LocaleChooser
 			MultipleResourceBundle multipleResourceBundle = new MultipleResourceBundle();
