@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
 group = theGroup
 version = theVersion
@@ -18,6 +19,10 @@ jar {
 		attributes 'Implementation-Title': 'nest NikEm STack',
 		'Implementation-Version': version
 	}
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
 }
 
 repositories {
@@ -51,4 +56,26 @@ eclipseJdt << {
 	File f = file('.settings/org.eclipse.core.resources.prefs')
 	f.write('eclipse.preferences.version=1\n')
 	f.append('encoding/<project>=UTF-8')
+}
+publishing {
+	publications {
+        mavenJava(MavenPublication) {
+        	groupId group
+        
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "https://TEAMCITY:8081/artifactory/ext-release-local"
+            credentials {
+            	username "xxx"
+            	password "xxx"
+        	}
+        }
+    }
 }
