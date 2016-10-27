@@ -1,6 +1,26 @@
-plugins {
-	id "com.bmuschko.nexus" version "2.3.1"
+// *** alte Schreibweise für Gradle-Plugins ***
+buildscript {
+	repositories {
+		maven {
+			url "https://TEAMCITY:8081/artifactory/repo"
+			credentials {
+				username teamcity_username
+				password teamcity_password
+			}
+		}
+		mavenCentral()
+	}
+	dependencies {
+		classpath "com.bmuschko:gradle-nexus-plugin:2.3.1"
+	}
 }
+apply plugin: "com.bmuschko.nexus"
+
+// *** neue Schreibweise für Gradle-Plugins ***
+//plugins {
+	//id "com.bmuschko:nexus" version "2.3.1"
+//}
+
 apply plugin: "java"
 apply plugin: "maven"
 apply plugin: "eclipse"
@@ -40,12 +60,19 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 repositories {
+	maven {
+		url "https://TEAMCITY:8081/artifactory/repo"
+		credentials {
+			username teamcity_username
+			password teamcity_password
+		}
+	}
 	mavenCentral()
 }
 
 dependencies {
-	compile "javax.servlet:javax.servlet-api:3.1.0"
-	compile "javax.servlet.jsp:javax.servlet.jsp-api:2.3.0"
+	compile 'javax.servlet:javax.servlet-api:4.0.0-b01'
+	compile 'javax.servlet.jsp:javax.servlet.jsp-api:2.3.2-b02'
 	compile "javax.websocket:javax.websocket-api:1.1"
 	compile "javax.servlet:jstl:1.2"
 	
