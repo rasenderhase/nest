@@ -1,14 +1,17 @@
 // *** alte Schreibweise für Gradle-Plugins ***
 buildscript {
 	repositories {
-		maven {
-			url "https://TEAMCITY:8081/artifactory/repo"
-			credentials {
-				username teamcity_username
-				password teamcity_password
+		if (maven_host != null) {
+			maven {
+				url maven_host
+				credentials {
+					username maven_username
+					password maven_password
+				}
 			}
+		} else {
+			mavenCentral()
 		}
-		mavenCentral()
 	}
 	dependencies {
 		classpath "com.bmuschko:gradle-nexus-plugin:2.3.1"
