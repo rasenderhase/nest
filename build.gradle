@@ -1,7 +1,7 @@
 // *** alte Schreibweise für Gradle-Plugins ***
 buildscript {
 	repositories {
-		if (maven_host != null) {
+		if (project.hasProperty("maven_host")) {
 			maven {
 				url maven_host
 				credentials {
@@ -10,7 +10,9 @@ buildscript {
 				}
 			}
 		} else {
-			mavenCentral()
+			maven {
+      			url "https://plugins.gradle.org/m2/"
+    		}
 		}
 	}
 	dependencies {
@@ -63,14 +65,17 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 repositories {
-	maven {
-		url "https://TEAMCITY:8081/artifactory/repo"
-		credentials {
-			username teamcity_username
-			password teamcity_password
+	if (project.hasProperty("maven_host")) {
+		maven {
+			url maven_host
+			credentials {
+				username maven_username
+				password maven_password
+			}
 		}
+	} else {
+		mavenCentral()
 	}
-	mavenCentral()
 }
 
 dependencies {
