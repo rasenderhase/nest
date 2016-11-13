@@ -80,11 +80,14 @@ repositories {
 
 dependencies {
 	compile 'javax.servlet:javax.servlet-api:4.0.0-b01'
-	compile 'javax.servlet.jsp:javax.servlet.jsp-api:2.3.2-b02'
-	compile "javax.websocket:javax.websocket-api:1.1"
 	compile "javax.servlet:jstl:1.2"
 	
-	compile "org.glassfish.jersey.containers:jersey-container-servlet:2.23.2"
+	compile "javax.ws.rs:javax.ws.rs-api:2.0.1"
+	
+	//@Inject annotation (used by de.nikem.nest.util.Messages)
+	compile "javax.inject:javax.inject:1"
+	
+	//Viewable (used by de.nikem.nest.web.layout.ViewableFactory)
 	compile("org.glassfish.jersey.ext:jersey-mvc-jsp:2.23.2") {
 		exclude group: "javax.servlet", module: "servlet-api"
 	}
