@@ -21,6 +21,7 @@ public interface Work<T> {
 	 *            fully managed <code>Connection</code> object. Do not change autoCommit mode, commit, close nor rollback it.
 	 * @return result of execution
 	 * @throws SQLException
+	 *             if a database access error occurs
 	 */
 	T doWork(Connection con) throws SQLException;
 }

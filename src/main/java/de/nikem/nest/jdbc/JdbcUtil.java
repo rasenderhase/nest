@@ -304,7 +304,7 @@ public abstract class JdbcUtil {
 	 * @param dataSource
 	 *            the <code>DataSource</code> to use for connection creation
 	 * @return new <code>JdbcUtil</code> instance
-	 * @see {@link DataSource}
+	 * @see DataSource
 	 */
 	public static JdbcUtil createDataSourceInstance(DataSource dataSource) {
 		return new DataSourceJdbcUtil(dataSource);
@@ -316,7 +316,7 @@ public abstract class JdbcUtil {
 	 * @param url
 	 *            a database url of the form <code>jdbc:subprotocol:subname</code>
 	 * @return new <code>JdbcUtil</code> instance
-	 * @see {@link DriverManager}
+	 * @see DriverManager
 	 */
 	public static JdbcUtil createDriverInstance(String url) {
 		return new DriverJdbcUtil(url, null, null, null);
@@ -330,7 +330,7 @@ public abstract class JdbcUtil {
 	 * @param info
 	 *            list of arbitrary string tag/value pairs as connection arguments; normally at least a "user" and "password" property should be included
 	 * @return new <code>JdbcUtil</code> instance
-	 * @see {@link DriverManager}
+	 * @see DriverManager
 	 */
 	public static JdbcUtil createDriverInstance(String url, Properties info) {
 		return new DriverJdbcUtil(url, null, null, info);
@@ -346,7 +346,7 @@ public abstract class JdbcUtil {
 	 * @param password
 	 *            the user's password
 	 * @return new <code>JdbcUtil</code> instance
-	 * @see {@link DriverManager}
+	 * @see DriverManager
 	 */
 	public static JdbcUtil createDriverInstance(String url, String user, String password) {
 		return new DriverJdbcUtil(url, user, password, null);
@@ -399,6 +399,7 @@ public abstract class JdbcUtil {
 	 * Execute a piece of work using a transaction. If there is an existing transaction associated with the current thread use the existing transaction. If not create one and bind it to the current thred. The <code>Connection</code> object
 	 * is provided to the {@link Work#doWork(Connection)} method.
 	 * 
+	 * @param <T> Type of the result
 	 * @param work
 	 *            piece of work to be executed in an transaction
 	 * @return result of the work execution
@@ -410,6 +411,7 @@ public abstract class JdbcUtil {
 	/**
 	 * Execute a piece of work. The <code>Connection</code> object is provided to the {@link Work#doWork(Connection)} method.
 	 * 
+	 * @param <T> Type of the result
 	 * @param work
 	 *            piece of work to be executed
 	 * @return result of the work execution
@@ -455,6 +457,7 @@ public abstract class JdbcUtil {
 	 * 
 	 * @param queryName
 	 *            name of the query in the query xml file.
+	 * @param preprocessQueryParams Query parameters that will be <b>replaced</b> in the query source string
 	 * @param queryParams
 	 *            named parameters for the query execution
 	 * @return result as a list of &lt;uppercase ColumnName, ColumnValue&gt; maps per each row.
@@ -487,10 +490,11 @@ public abstract class JdbcUtil {
 	 * 
 	 * @param queryName
 	 *            name of the query in the query xml file.
+	 * @param preprocessQueryParams Query parameters that will be <b>replaced</b> in the query source string
 	 * @param queryParams
 	 *            named parameters for the query execution.
 	 * @return either (1) the row count for SQL Data Manipulation Language (DML) statements or (2) 0 for SQL statements that return nothing
-	 * @see {@link PreparedStatement#executeUpdate()}
+	 * @see PreparedStatement#executeUpdate()
 	 */
 	public int executeUpdateNamedQuery(final String queryName, final QueryParam[] preprocessQueryParams, final QueryParam... queryParams) {
 		final String queryString = getNamedQuery(queryName);
@@ -578,6 +582,7 @@ public abstract class JdbcUtil {
 	 *            the connection to use for the statement
 	 * @param queryString
 	 *            query string containing named parameters (e.g. <code>:id</code>)
+	 * @param preprocessQueryParams Query parameters that will be <b>replaced</b> in the query source string
 	 * @param queryParams
 	 *            parameter name and value objects
 	 * @return a prepared statement ready to be executed
