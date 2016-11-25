@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -18,6 +19,7 @@ public class DemoResource {
 
 	@GET
 	@Produces("text/html")
+	@RolesAllowed({ "info", "admin" })
 	public Object index() {
 		Map<String, Object> model = new HashMap<>();
 		model.put("datetime", new Date());

@@ -8,13 +8,13 @@ import javax.ws.rs.core.Context;
 
 import de.nikem.nest.web.layout.ViewableFactory;
 
-@Path("/nest")
+@Path("/nest/")
 public class IndexResource {
 	
 	@Context HttpServletRequest request;
 	
 	@GET
-	@Path("/index")
+	@Path("index")
 	@Produces("text/html")
 	public Object index() {
 		return new ViewableFactory(request).createViewable("/nest/index");

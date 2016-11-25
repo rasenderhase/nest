@@ -16,7 +16,7 @@ import de.nikem.nest.filter.BeanFactory;
 import de.nikem.nest.util.Messages;
 import de.nikem.nest.web.layout.ViewableFactory;
 
-@Path("/nest")
+@Path("/nest/")
 public class LoginResource {
 	
 	@Context HttpServletRequest request;
@@ -27,17 +27,16 @@ public class LoginResource {
 	}
 	
 	@GET
-	@Path("/dologin")
+	@Path("dologin")
 	@Produces("text/html")
 	public Object doLogin() {
-//		getMessages().initLocalizationContext();
 		Map<String, Object> model = new HashMap<>();
 		model.put("title", "Login");
 		return new ViewableFactory(request).createViewable("/nest/dologin", model, "login");
 	}
 	
 	@GET
-	@Path("/login")
+	@Path("login")
 	@Produces("text/html")
 	public Object login() {
 		final URI location;
@@ -45,12 +44,14 @@ public class LoginResource {
 		return Response.seeOther(location).build();
 	}
 	
-	@Path("/failed")
-	@GET
-	@Produces("text/plain")
-	public Object loginfailed() {
-		return "kein Zugriff";
-	}
+//	@Path("failed")
+//	@Produces("text/html")
+//	public Object loginfailed() {
+//		Map<String, Object> model = new HashMap<>();
+//		model.put("title", "Login");
+//		request.getSession().setAttribute("snackMessage", getMessages().getMessage("nest-web.login_failed"));
+//		return new ViewableFactory(request).createViewable("/nest/dologin", model, "login");
+//	}
 
 	public Messages getMessages() {
 		return messages;
