@@ -77,7 +77,7 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 	 */
 	public Locale getRequestLocale() {
 		ServletRequest request = SERVLET_REQUESTS.get();
-		return (Locale) Config.get(request, Config.FMT_LOCALE);
+		return Locale.forLanguageTag(((String) Config.get(request, Config.FMT_LOCALE)).replaceAll("-", "_"));
 	}
 
 }
