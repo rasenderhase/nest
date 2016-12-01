@@ -1,6 +1,7 @@
 package de.nikem.nest.filter;
 
 import java.net.URI;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -9,6 +10,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
+import javax.servlet.jsp.jstl.core.Config;
 import javax.ws.rs.core.UriBuilder;
 
 import de.nikem.nest.util.Messages;
@@ -70,5 +72,12 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 		return retrieveRequestScopedBean(Messages.class, t -> t.setRequest(request));
 	}
 
+	/**
+	 * @return Locale of current Request
+	 */
+	public Locale getRequestLocale() {
+		ServletRequest request = SERVLET_REQUESTS.get();
+		return (Locale) Config.get(request, Config.FMT_LOCALE);
+	}
 
 }
