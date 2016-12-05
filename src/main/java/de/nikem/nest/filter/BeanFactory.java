@@ -10,6 +10,8 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.ws.rs.core.UriBuilder;
 
@@ -65,6 +67,31 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 			request.setAttribute(name, bean);
 		}
 		return bean;
+	}
+	
+	protected <T> T retrieveSessionScopedBean(Class<T> clazz, Function<T, T> initialization) {
+		String name = BeanFactory.class.getName() + "." + clazz.getName();
+		@SuppressWarnings("unchecked")
+		T bean = (T) getHttpSession().getAttribute(name);
+		if (bean == null) {
+			try {
+				bean = clazz.newInstance();
+				bean = initialization.apply(bean);
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new IllegalArgumentException(e);
+			}
+			getHttpSession().setAttribute(name, bean);
+		}
+		return bean;
+	}
+
+	/**
+	 * Retrieve HttpSession of current request.
+	 * @return an HttpSession
+	 */
+	protected HttpSession getHttpSession() {
+		HttpServletRequest request = (HttpServletRequest) SERVLET_REQUESTS.get();
+		return request.getSession();
 	}
 	
 	public Messages getMessages() {
