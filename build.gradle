@@ -145,12 +145,14 @@ modifyPom {
  */
 publishing {
     repositories {
-        maven {
-            url maven_host_snapshots
-            credentials {
-				username maven_username
-				password maven_password
-			}
+    	if (project.hasProperty("maven_host_snapshots")) {
+	        maven {
+	            url maven_host_snapshots
+	            credentials {
+					username maven_username
+					password maven_password
+				}
+	        }
         }
     }
 }
