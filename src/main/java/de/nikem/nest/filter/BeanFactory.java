@@ -53,7 +53,7 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 	}
 	
 	protected <T> T retrieveRequestScopedBean(Class<T> clazz, Function<T, T> initialization) {
-		ServletRequest request = SERVLET_REQUESTS.get();
+		ServletRequest request = getRequest();
 		String name = BeanFactory.class.getName() + "." + clazz.getName();
 		@SuppressWarnings("unchecked")
 		T bean = (T) request.getAttribute(name);
@@ -90,20 +90,28 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 	 * @return an HttpSession
 	 */
 	protected HttpSession getHttpSession() {
-		HttpServletRequest request = (HttpServletRequest) SERVLET_REQUESTS.get();
+		HttpServletRequest request = (HttpServletRequest) getRequest();
 		return request.getSession();
 	}
 	
 	public Messages getMessages() {
-		ServletRequest request = SERVLET_REQUESTS.get();
+		ServletRequest request = getRequest();
 		return retrieveRequestScopedBean(Messages.class, t -> t.setRequest(request));
+	}
+
+	/**
+	 * @return the request of current thread
+	 */
+	protected ServletRequest getRequest() {
+		ServletRequest request = SERVLET_REQUESTS.get();
+		return request;
 	}
 
 	/**
 	 * @return Locale of current Request
 	 */
 	public Locale getRequestLocale() {
-		ServletRequest request = SERVLET_REQUESTS.get();
+		ServletRequest request = getRequest();
 		return Locale.forLanguageTag(((String) Config.get(request, Config.FMT_LOCALE)).replaceAll("-", "_"));
 	}
 
