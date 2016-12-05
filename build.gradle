@@ -160,7 +160,7 @@ publishing {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.web
+            from components.java
         }
     }
 }
