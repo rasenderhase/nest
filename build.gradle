@@ -32,6 +32,9 @@ apply plugin: "eclipse"
 apply plugin: "signing"
 apply plugin: "jacoco"
 
+//Für Publish ins lokale Artifactory
+apply plugin: "maven-publish"
+
 group = theGroup
 version = theVersion
 sourceCompatibility = theSourceCompatibility
@@ -134,6 +137,30 @@ modifyPom {
 			url "scm:git:git@github.com/rasenderhase/nest.git"
 		}
 	}
+}
+
+/*
+ * Publikation von SNAPSHOTs inslokale Artifactory-Repo:
+ * $> gradle publishMavenJavaPublicationToMavenRepository
+ */
+publishing {
+    repositories {
+        maven {
+            url maven_host_snapshots
+            credentials {
+				username maven_username
+				password maven_password
+			}
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.web
+        }
+    }
 }
 
 task wrapper(type: Wrapper) {
