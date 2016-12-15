@@ -11,7 +11,7 @@ import de.nikem.nest.web.layout.ViewableFactory;
 @Path("/nest/")
 public class IndexResource {
 	
-	@Context HttpServletRequest request;
+	protected @Context HttpServletRequest request;
 	
 	@GET
 	@Path("index")
