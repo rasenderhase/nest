@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -403,8 +404,9 @@ public abstract class JdbcUtil {
 	 * @param work
 	 *            piece of work to be executed in an transaction
 	 * @return result of the work execution
+	 * @throws NikemJdbcException contains causing {@link SQLException}
 	 */
-	public <T> T doInTransaction(Work<T> work) {
+	public <T> T doInTransaction(Work<T> work) throws NikemJdbcException {
 		return doWithoutTransaction(new TransactionWork<T>(work));
 	}
 
@@ -416,7 +418,7 @@ public abstract class JdbcUtil {
 	 *            piece of work to be executed
 	 * @return result of the work execution
 	 */
-	public <T> T doWithoutTransaction(Work<T> work) {
+	public <T> T doWithoutTransaction(Work<T> work) throws NikemJdbcException {
 		ConnectionInfo info = threadConnection.get();
 		Connection con = null;
 		boolean myConnection = false;
@@ -696,5 +698,18 @@ public abstract class JdbcUtil {
 		if (queryString == null)
 			throw new NikemJdbcException("No query found for name " + name);
 		return queryString;
+	}
+	
+	public static void setInt(PreparedStatement stmt, int column, Number value) throws SQLException {
+		if (value == null) {
+			stmt.setNull(column, Types.INTEGER);
+		} else {
+			stmt.setInt(column, value.intValue());
+		}
+	}
+	
+	public static Integer getInt(ResultSet rs, String columnName) throws SQLException {
+		int result = rs.getInt(columnName);
+		return rs.wasNull() ? null : result;
 	}
 }
