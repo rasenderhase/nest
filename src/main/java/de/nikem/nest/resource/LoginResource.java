@@ -40,7 +40,7 @@ public class LoginResource {
 	@Produces("text/html")
 	public Object login() {
 		final URI location;
-		location = UriBuilder.fromPath(request.getContextPath() + "/rest/nest/index").build();
+		location = UriBuilder.fromPath(request.getContextPath()).build();
 		return Response.seeOther(location).build();
 	}
 	

@@ -24,7 +24,10 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 	@SuppressWarnings("unchecked")
 	public static <T extends BeanFactory> T get() {
 		log.fine("nest.filter.retrieve_beanfactory");
-		return (T) SERVLET_REQUESTS.get().getServletContext().getAttribute(BeanFactory.class.getName());
+		return (T) SERVLET_REQUESTS
+				.get()
+				.getServletContext()
+				.getAttribute(BeanFactory.class.getName());
 	}
 	
 	@Override
