@@ -3,6 +3,7 @@ package de.nikem.nest.jdbc;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -72,7 +73,7 @@ public abstract class JdbcUtil {
 			this.dataSource = dataSource;
 		}
 		@Override
-		protected Connection getConnection() throws SQLException {
+		protected Connection doGetConnection() throws SQLException {
 			return dataSource.getConnection();
 		}
 		public DataSource getDataSource() {
@@ -146,7 +147,7 @@ public abstract class JdbcUtil {
 			this.dataSource = new DriverManagerDataSource();
 		}
 		@Override
-		protected Connection getConnection() throws SQLException {
+		protected Connection doGetConnection() throws SQLException {
 			if (user == null && info == null) {
 				return DriverManager.getConnection(url);
 			}
@@ -563,7 +564,14 @@ public abstract class JdbcUtil {
 		return resultQueryString;
 	}
 	
-	protected abstract Connection getConnection() throws SQLException;
+	protected Connection getConnection() throws SQLException {
+		ConnectionInvocationHandler handler = new ConnectionInvocationHandler(doGetConnection());
+		return (Connection) Proxy.newProxyInstance(Connection.class.getClassLoader(), 
+				new Class<?>[] { Connection.class },
+				handler);
+	}
+	
+	protected abstract Connection doGetConnection() throws SQLException;
 	public abstract DataSource getDataSource();
 
 	protected String parameterMarkers(int size) {
