@@ -56,8 +56,12 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 	}
 	
 	protected <T> T retrieveRequestScopedBean(Class<T> clazz, Function<T, T> initialization) {
-		ServletRequest request = getRequest();
 		String name = BeanFactory.class.getName() + "." + clazz.getName();
+		return retrieveRequestScopedBean(clazz, initialization, name);
+	}
+
+	private <T> T retrieveRequestScopedBean(Class<T> clazz, Function<T, T> initialization, String name) {
+		ServletRequest request = getRequest();
 		@SuppressWarnings("unchecked")
 		T bean = (T) request.getAttribute(name);
 		if (bean == null) {
@@ -74,6 +78,10 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 	
 	protected <T> T retrieveSessionScopedBean(Class<T> clazz, Function<T, T> initialization) {
 		String name = BeanFactory.class.getName() + "." + clazz.getName();
+		return retrieveSessionScopedBean(clazz, initialization, name);
+	}
+
+	protected <T> T retrieveSessionScopedBean(Class<T> clazz, Function<T, T> initialization, String name) {
 		@SuppressWarnings("unchecked")
 		T bean = (T) getHttpSession().getAttribute(name);
 		if (bean == null) {
