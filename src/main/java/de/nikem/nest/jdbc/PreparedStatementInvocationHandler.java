@@ -30,7 +30,9 @@ public class PreparedStatementInvocationHandler implements InvocationHandler {
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		String query = "";
 		boolean executeMethod = false;
-		if (isParameterSetterMethod(method, args)) {
+		if ("setNull".equals(method.getName())) {
+			parameters.put((int) args[0], "null");
+		} else if (isParameterSetterMethod(method, args)) {
 			//Record parameters
 			parameters.put((int) args[0], toDynamicSqlParameterString(args[1]));
 		} else if (method.getName().equals("registerOurParameter")

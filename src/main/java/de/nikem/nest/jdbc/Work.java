@@ -1,7 +1,6 @@
 package de.nikem.nest.jdbc;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * Piece of work to be executed by {@link JdbcUtil}. Use this interface to operate on the JDBC {@link Connection} object.<br>
@@ -20,8 +19,8 @@ public interface Work<T> {
 	 * @param con
 	 *            fully managed <code>Connection</code> object. Do not change autoCommit mode, commit, close nor rollback it.
 	 * @return result of execution
-	 * @throws SQLException
-	 *             if a database access error occurs
+	 * @throws Exception
+	 *             if an error occurs
 	 */
-	T doWork(Connection con) throws SQLException;
+	T doWork(Connection con) throws Exception;
 }

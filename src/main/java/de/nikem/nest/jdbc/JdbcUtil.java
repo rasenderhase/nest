@@ -222,14 +222,6 @@ public abstract class JdbcUtil {
 					log.fine("Commit Connection for Thread " + Thread.currentThread().getName());
 					con.commit();
 				}
-			} catch (SQLException e) {
-				if (myTransaction) {
-					log.fine("Rollback Connection for Thread " + Thread.currentThread().getName());
-					rollback(con);
-				}
-				NikemJdbcException ex = new NikemJdbcException(e);
-				log.throwing(getClass().getName(), "doInTransaction", ex);
-				throw ex;
 			} catch (RuntimeException e) {
 				if (myTransaction) {
 					log.fine("Rollback Connection for Thread " + Thread.currentThread().getName());
@@ -237,6 +229,14 @@ public abstract class JdbcUtil {
 				}
 				log.throwing(getClass().getName(), "doInTransaction", e);
 				throw e;
+			} catch (Exception e) {
+				if (myTransaction) {
+					log.fine("Rollback Connection for Thread " + Thread.currentThread().getName());
+					rollback(con);
+				}
+				NikemJdbcException ex = new NikemJdbcException(e);
+				log.throwing(getClass().getName(), "doInTransaction", ex);
+				throw ex;
 			}
 			return result;
 		}
@@ -438,13 +438,13 @@ public abstract class JdbcUtil {
 
 			result = work.doWork(con);
 
-		} catch (SQLException e) {
-			NikemJdbcException ex = new NikemJdbcException(e);
-			log.throwing(getClass().getName(), "doWithoutTransaction", ex);
-			throw ex;
 		} catch (RuntimeException e) {
 			log.throwing(getClass().getName(), "doWithoutTransaction", e);
 			throw e;
+		} catch (Exception e) {
+			NikemJdbcException ex = new NikemJdbcException(e);
+			log.throwing(getClass().getName(), "doWithoutTransaction", ex);
+			throw ex;
 		} finally {
 			if (myConnection) {
 				log.fine("Close Connection for Thread " + Thread.currentThread().getName());
