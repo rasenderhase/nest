@@ -6,12 +6,16 @@ import org.glassfish.jersey.server.mvc.Viewable;
 
 public class ViewableFactory {
 	
-	private final HttpServletRequest request;
+	private HttpServletRequest request;
 	
-	public ViewableFactory(HttpServletRequest request) {
-		super();
-		this.request = request;
+	protected HttpServletRequest getRequest() {
+		return request;
 	}
+
+	public ViewableFactory setRequest(HttpServletRequest request) {
+		this.request = request;
+		return this;
+	}	
 
 	public Object createViewable(String templateName) {
 		return createViewable(templateName, null, null);

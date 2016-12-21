@@ -1,22 +1,33 @@
 package de.nikem.nest.resource;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 
+import de.nikem.nest.filter.BeanFactory;
 import de.nikem.nest.web.layout.ViewableFactory;
 
 @Path("/nest/")
 public class IndexResource {
 	
-	protected @Context HttpServletRequest request;
+	private ViewableFactory viewableFactory;
+	
+	public IndexResource() {
+		setViewableFactory(BeanFactory.get().getViewableFactory());
+	}
 	
 	@GET
 	@Path("index")
 	@Produces("text/html")
 	public Object index() {
-		return new ViewableFactory(request).createViewable("/nest/index");
+		return getViewableFactory().createViewable("/nest/index");
+	}
+	
+	protected ViewableFactory getViewableFactory() {
+		return viewableFactory;
+	}
+
+	public void setViewableFactory(ViewableFactory viewableFactory) {
+		this.viewableFactory = viewableFactory;
 	}
 }

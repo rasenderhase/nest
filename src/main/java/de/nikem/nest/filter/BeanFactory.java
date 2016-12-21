@@ -16,6 +16,7 @@ import javax.servlet.jsp.jstl.core.Config;
 import javax.ws.rs.core.UriBuilder;
 
 import de.nikem.nest.util.Messages;
+import de.nikem.nest.web.layout.ViewableFactory;
 
 public class BeanFactory implements ServletRequestListener, ServletContextListener {
 	static ThreadLocal<ServletRequest> SERVLET_REQUESTS = new ThreadLocal<>();
@@ -106,8 +107,7 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 	}
 	
 	public Messages getMessages() {
-		ServletRequest request = getRequest();
-		return retrieveRequestScopedBean(Messages.class, t -> t.setRequest(request));
+		return retrieveRequestScopedBean(Messages.class, t -> t.setRequest(getRequest()));
 	}
 
 	/**
@@ -126,4 +126,7 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 		return Locale.forLanguageTag(((String) Config.get(request, Config.FMT_LOCALE)).replaceAll("-", "_"));
 	}
 
+	public ViewableFactory getViewableFactory() {
+		return retrieveRequestScopedBean(ViewableFactory.class, t -> t.setRequest((HttpServletRequest) getRequest()));
+	}
 }

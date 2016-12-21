@@ -5,18 +5,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 
+import de.nikem.nest.filter.BeanFactory;
 import de.nikem.nest.web.layout.ViewableFactory;
 
 @Path("/nest/demo")
 public class DemoResource {
-	@Context HttpServletRequest request;
 
+	private ViewableFactory viewableFactory;
+	
+	public DemoResource() {
+		setViewableFactory(BeanFactory.get().getViewableFactory());
+	}
+	
 	@GET
 	@Produces("text/html")
 	@RolesAllowed({ "info", "admin" })
@@ -24,6 +28,14 @@ public class DemoResource {
 		Map<String, Object> model = new HashMap<>();
 		model.put("datetime", new Date());
 		model.put("title", "Demo");
-		return new ViewableFactory(request).createViewable("/nest/demo/demo", model, "demo");
+		return getViewableFactory().createViewable("/nest/demo/demo", model, "demo");
+	}
+	
+	protected ViewableFactory getViewableFactory() {
+		return viewableFactory;
+	}
+
+	public void setViewableFactory(ViewableFactory viewableFactory) {
+		this.viewableFactory = viewableFactory;
 	}
 }

@@ -21,9 +21,11 @@ public class LoginResource {
 	
 	@Context HttpServletRequest request;
 	private Messages messages;
+	private ViewableFactory viewableFactory;
 	
 	public LoginResource() {
 		setMessages(BeanFactory.get().getMessages());
+		setViewableFactory(BeanFactory.get().getViewableFactory());
 	}
 	
 	@GET
@@ -32,7 +34,7 @@ public class LoginResource {
 	public Object doLogin() {
 		Map<String, Object> model = new HashMap<>();
 		model.put("title", "Login");
-		return new ViewableFactory(request).createViewable("/nest/dologin", model, "login");
+		return getViewableFactory().createViewable("/nest/dologin", model, "login");
 	}
 	
 	@GET
@@ -59,5 +61,13 @@ public class LoginResource {
 
 	public void setMessages(Messages messages) {
 		this.messages = messages;
+	}
+	
+	protected ViewableFactory getViewableFactory() {
+		return viewableFactory;
+	}
+
+	public void setViewableFactory(ViewableFactory viewableFactory) {
+		this.viewableFactory = viewableFactory;
 	}
 }
