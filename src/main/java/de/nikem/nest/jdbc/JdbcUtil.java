@@ -374,6 +374,17 @@ public abstract class JdbcUtil {
 		}
 	}
 
+	protected final Function<ResultSet, List<Map<String, ?>>, SQLException> resultSetToRowMap = new Function<ResultSet, List<Map<String, ?>>, SQLException>() {
+		@Override
+		public List<Map<String, ?>> apply(ResultSet resultSet) throws SQLException {
+			List<Map<String, ?>> result = new ArrayList<>();
+			while (resultSet.next()) {
+				result.add(resultSetRowToMap(resultSet));
+			}
+			return result;
+		}
+	};
+	
 	private Map<String, String> queryMap = new HashMap<String, String>();
 
 	private JdbcUtil() {
@@ -488,16 +499,7 @@ public abstract class JdbcUtil {
 	 * @return result as a list of &lt;uppercase ColumnName, ColumnValue&gt; maps per each row.
 	 */
 	public List<Map<String, ?>> executeNamedQuery(final String queryName, final QueryParam[] preprocessQueryParams, final QueryParam... queryParams) {
-		return executeNamedQuery(queryName, new Function<ResultSet, List<Map<String, ?>>, SQLException>() {
-			@Override
-			public List<Map<String, ?>> apply(ResultSet resultSet) throws SQLException {
-				List<Map<String, ?>> result = new ArrayList<>();
-				while (resultSet.next()) {
-					result.add(resultSetRowToMap(resultSet));
-				}
-				return null;
-			}
-		}, preprocessQueryParams, queryParams);
+		return executeNamedQuery(queryName, resultSetToRowMap, preprocessQueryParams, queryParams);
 	}
 	
 	/**
@@ -764,5 +766,9 @@ public abstract class JdbcUtil {
 	public static Integer getInt(ResultSet rs, String columnName) throws SQLException {
 		int result = rs.getInt(columnName);
 		return rs.wasNull() ? null : result;
+	}
+
+	public Function<ResultSet, List<Map<String, ?>>, SQLException> getResultSetToRowMap() {
+		return resultSetToRowMap;
 	}
 }
