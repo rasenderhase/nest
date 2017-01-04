@@ -241,6 +241,16 @@ public abstract class JdbcUtil {
 			return result;
 		}
 	}
+	
+	/**
+	 * @author andreas
+	 *
+	 * @param <T>
+	 * @param <R>
+	 */
+	public static interface Function<T, R, E extends Throwable> {
+		R apply(T t) throws E;
+	}
 
 	private static final Logger log = Logger.getLogger(JdbcUtil.class.getName());
 
@@ -385,6 +395,18 @@ public abstract class JdbcUtil {
 			throw new NikemJdbcException("Exception accessing resource " + resourceName, e);
 		}
 	}
+	
+	public Number getNextValue(String sequenceName) {
+		return doInTransaction(con -> {
+			Number nextValue = null;
+			List<Map<String, ?>> result = executeNamedQuery("getNextValue", 
+					new QueryParam[] {new QueryParam("sequenceName", sequenceName)});
+			if (result.size() > 0) {
+				nextValue = (Number) result.get(0).values().iterator().next();
+			}
+			return nextValue;
+		});
+	}
 
 	protected Object changeToSqlDatatype(QueryParam param) {
 		log.fine(param.toString());
@@ -466,19 +488,42 @@ public abstract class JdbcUtil {
 	 * @return result as a list of &lt;uppercase ColumnName, ColumnValue&gt; maps per each row.
 	 */
 	public List<Map<String, ?>> executeNamedQuery(final String queryName, final QueryParam[] preprocessQueryParams, final QueryParam... queryParams) {
-		final String queryString = getNamedQuery(queryName);
-		return doWithoutTransaction(new Work<List<Map<String, ?>>>() {
+		return executeNamedQuery(queryName, new Function<ResultSet, List<Map<String, ?>>, SQLException>() {
 			@Override
-			public List<Map<String, ?>> doWork(Connection con) throws SQLException {
+			public List<Map<String, ?>> apply(ResultSet resultSet) throws SQLException {
+				List<Map<String, ?>> result = new ArrayList<>();
+				while (resultSet.next()) {
+					result.add(resultSetRowToMap(resultSet));
+				}
+				return null;
+			}
+		}, preprocessQueryParams, queryParams);
+	}
+	
+	/**
+	 * Execute a named query and return the complete result of the query execution as a list of row maps.
+	 * 
+	 * @param queryName
+	 *            name of the query in the query xml file.
+	 * @param resultSetProcessor
+	 *            callback for processing the resultset. the return value will be passed to the methods return value.
+	 * @param preprocessQueryParams Query parameters that will be <b>replaced</b> in the query source string
+	 * @param queryParams
+	 *            named parameters for the query execution
+	 * @return result return by <code>resultSetProcessor</code>
+	 */
+	public <R> R executeNamedQuery(final String queryName, final Function<ResultSet, R, SQLException> resultSetProcessor, final QueryParam[] preprocessQueryParams, final QueryParam... queryParams) {
+		final String queryString = getNamedQuery(queryName);
+		return doWithoutTransaction(new Work<R>() {
+			@Override
+			public R doWork(Connection con) throws SQLException {
 				PreparedStatement stmt = null;
 				ResultSet resultSet = null;
-				List<Map<String, ?>> result = new ArrayList<Map<String, ?>>();
+				R result = null;
 				try {
 					stmt = prepareStatement(con, queryString, preprocessQueryParams, queryParams);
 					resultSet = stmt.executeQuery();
-					while (resultSet.next()) {
-						result.add(resultSetRowToMap(resultSet));
-					}
+					result = resultSetProcessor.apply(resultSet);
 				} finally {
 					close(resultSet);
 					close(stmt);
