@@ -31,6 +31,8 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 				.getAttribute(BeanFactory.class.getName());
 	}
 	
+	private Messages messagesMock;
+	
 	@Override
 	public void requestDestroyed(ServletRequestEvent sre) {
 		BeanFactory.SERVLET_REQUESTS.remove();
@@ -107,6 +109,9 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 	}
 	
 	public Messages getMessages() {
+		if (messagesMock != null) {
+			return messagesMock;
+		}
 		return retrieveRequestScopedBean(Messages.class, t -> t.setRequest(getRequest()));
 	}
 
@@ -128,5 +133,13 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 
 	public ViewableFactory getViewableFactory() {
 		return retrieveRequestScopedBean(ViewableFactory.class, t -> t.setRequest((HttpServletRequest) getRequest()));
+	}
+
+	public Messages getMessagesMock() {
+		return messagesMock;
+	}
+
+	public void setMessagesMock(Messages messagesMock) {
+		this.messagesMock = messagesMock;
 	}
 }
