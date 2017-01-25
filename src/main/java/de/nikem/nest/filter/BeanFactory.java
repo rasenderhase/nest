@@ -3,6 +3,7 @@ package de.nikem.nest.filter;
 import java.net.URI;
 import java.util.Locale;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContextEvent;
@@ -58,12 +59,19 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 	public void contextDestroyed(ServletContextEvent sce) {
 	}
 	
+	/**
+	 * @deprecated use {@link #retrieveRequestScopedBean(String, Supplier)}
+	 */
 	protected <T> T retrieveRequestScopedBean(Class<T> clazz, Function<T, T> initialization) {
 		String name = BeanFactory.class.getName() + "." + clazz.getName();
 		return retrieveRequestScopedBean(clazz, initialization, name);
 	}
 
-	private <T> T retrieveRequestScopedBean(Class<T> clazz, Function<T, T> initialization, String name) {
+	/**
+	 * @deprecated use {@link #retrieveRequestScopedBean(String, Supplier)}
+	 */
+	@Deprecated()
+	protected <T> T retrieveRequestScopedBean(Class<T> clazz, Function<T, T> initialization, String name) {
 		ServletRequest request = getRequest();
 		@SuppressWarnings("unchecked")
 		T bean = (T) request.getAttribute(name);
@@ -79,11 +87,19 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 		return bean;
 	}
 	
+	/**
+	 * @deprecated use {@link #retrieveSessionScopedBean(String, Supplier)}
+	 */
+	@Deprecated()
 	protected <T> T retrieveSessionScopedBean(Class<T> clazz, Function<T, T> initialization) {
 		String name = BeanFactory.class.getName() + "." + clazz.getName();
 		return retrieveSessionScopedBean(clazz, initialization, name);
 	}
 
+	/**
+	 * @deprecated use {@link #retrieveRequestScopedBean(String, Supplier)}
+	 */
+	@Deprecated()
 	protected <T> T retrieveSessionScopedBean(Class<T> clazz, Function<T, T> initialization, String name) {
 		@SuppressWarnings("unchecked")
 		T bean = (T) getHttpSession().getAttribute(name);
@@ -94,6 +110,27 @@ public class BeanFactory implements ServletRequestListener, ServletContextListen
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new IllegalArgumentException(e);
 			}
+			getHttpSession().setAttribute(name, bean);
+		}
+		return bean;
+	}
+
+	protected <T> T retrieveRequestScopedBean(String name, Supplier<T> initialization) {
+		ServletRequest request = getRequest();
+		@SuppressWarnings("unchecked")
+		T bean = (T) request.getAttribute(name);
+		if (bean == null) {
+			bean = initialization.get();
+			request.setAttribute(name, bean);
+		}
+		return bean;
+	}
+
+	protected <T> T retrieveSessionScopedBean(String name, Supplier<T> initialization) {
+		@SuppressWarnings("unchecked")
+		T bean = (T) getHttpSession().getAttribute(name);
+		if (bean == null) {
+			bean = initialization.get();
 			getHttpSession().setAttribute(name, bean);
 		}
 		return bean;
