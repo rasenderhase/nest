@@ -87,6 +87,8 @@ dependencies {
 	
 	compile "javax.ws.rs:javax.ws.rs-api:2.0.1"
 	
+	compile "org.eclipse.persistence:javax.persistence:2.1.1"
+	
 	//@Inject annotation (used by de.nikem.nest.util.Messages)
 	compile "javax.inject:javax.inject:1"
 	
