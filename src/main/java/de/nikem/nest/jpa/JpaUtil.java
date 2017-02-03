@@ -12,7 +12,7 @@ import javax.persistence.PersistenceException;
 
 import de.nikem.nest.jdbc.NikemJdbcException;
 
-public abstract class JpaUtil {
+public class JpaUtil {
 	public static class EntityManagerInfo {
 		private final EntityManager em;
 		private boolean transactionActive = false;
