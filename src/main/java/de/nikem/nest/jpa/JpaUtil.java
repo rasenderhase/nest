@@ -1,6 +1,5 @@
 package de.nikem.nest.jpa;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -115,7 +114,7 @@ public abstract class JpaUtil {
 	}
 
 	/**
-	 * Execute a piece of work. The <code>Connection</code> object is provided to the {@link Work#doWork(Connection)} method.
+	 * Execute a piece of work. The <code>Connection</code> object is provided to the {@link Work#apply(Object)} method.
 	 * 
 	 * @param <T> Type of the result
 	 * @param work
