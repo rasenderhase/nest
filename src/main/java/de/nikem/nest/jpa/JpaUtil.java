@@ -41,6 +41,21 @@ public class JpaUtil {
 		 * @return the function result
 		 */
 		R apply(T t) throws Exception;
+		
+		/**
+		 * Helper method to avoid {@link javax.persistence.NoResultException}. If the collection is
+		 * empty, null is returned, else the first element is returned.
+		 * @param collection
+		 * @return
+		 */
+		public static <T> T getSingle(Collection<T> collection) {
+			int size = collection.size();
+			switch(size) {
+			case 0: return null;
+			case 1: return collection.iterator().next();
+			default:throw new NonUniqueResultException("expected 0 or 1 result. Got " + size);
+			}
+		}
 	}
 
 	private static class TransactionWork<T> implements Work<EntityManager, T> {
@@ -200,20 +215,5 @@ public class JpaUtil {
 
 	public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
 		this.entityManagerFactory = entityManagerFactory;
-	}
-
-	/**
-	 * Helper method to avoid {@link javax.persistence.NoResultException}. If the collection is
-	 * empty, null is returned, else the first element is returned.
-	 * @param collection
-	 * @return
-	 */
-	public <T> T getSingle(Collection<T> collection) {
-		int size = collection.size();
-		switch(size) {
-		case 0: return null;
-		case 1: return collection.iterator().next();
-		default:throw new NonUniqueResultException("expected 0 or 1 result. Got " + size);
-		}
 	}
 }
