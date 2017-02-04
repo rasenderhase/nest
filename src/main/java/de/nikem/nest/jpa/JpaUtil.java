@@ -1,12 +1,14 @@
 package de.nikem.nest.jpa;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 
@@ -29,18 +31,18 @@ public class JpaUtil {
 			this.transactionActive = transactionActive;
 		}
 	}
-	
+
 	public interface Work<T, R> {
 
-	    /**
-	     * Applies this function to the given argument.
-	     *
-	     * @param t the function argument
-	     * @return the function result
-	     */
-	    R apply(T t) throws Exception;
+		/**
+		 * Applies this function to the given argument.
+		 *
+		 * @param t the function argument
+		 * @return the function result
+		 */
+		R apply(T t) throws Exception;
 	}
-	
+
 	private static class TransactionWork<T> implements Work<EntityManager, T> {
 		private final Work<EntityManager, T> delegate;
 
@@ -85,7 +87,7 @@ public class JpaUtil {
 			}
 			return result;
 		}
-		
+
 		public static void rollback(EntityTransaction con) {
 			if (con != null) {
 				try {
@@ -96,18 +98,18 @@ public class JpaUtil {
 			}
 		}
 	}
-	
+
 	private static final Logger log = Logger.getLogger(JpaUtil.class.getName());
-	
+
 	private static final ThreadLocal<EntityManagerInfo> threadConnection = new ThreadLocal<EntityManagerInfo>() {
 		protected EntityManagerInfo initialValue() {
 			return null;
 		};
 	};
-	
+
 	private final String persistenceUnitName;
 	private EntityManagerFactory entityManagerFactory;
-	
+
 	public JpaUtil(String persistenceUnitName) {
 		super();
 		this.persistenceUnitName = persistenceUnitName;
@@ -156,7 +158,7 @@ public class JpaUtil {
 		}
 		return result;
 	}
-	
+
 	public <T> T doInTransaction(Work<EntityManager, T> work) throws NikemJdbcException {
 		return doWithoutTransaction(new TransactionWork<T>(work));
 	}
@@ -168,7 +170,7 @@ public class JpaUtil {
 	protected EntityManager doGetEntityManager() {
 		return getEntityManagerFactory().createEntityManager();
 	}
-	
+
 	/**
 	 * Close EntityManager safely without throwing any exception.
 	 * 
@@ -198,5 +200,20 @@ public class JpaUtil {
 
 	public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
 		this.entityManagerFactory = entityManagerFactory;
+	}
+
+	/**
+	 * Helper method to avoid {@link javax.persistence.NoResultException}. If the collection is
+	 * empty, null is returned, else the first element is returned.
+	 * @param collection
+	 * @return
+	 */
+	public <T> T getSingle(Collection<T> collection) {
+		int size = collection.size();
+		switch(size) {
+		case 0: return null;
+		case 1: return collection.iterator().next();
+		default:throw new NonUniqueResultException("expected 0 or 1 result. Got " + size);
+		}
 	}
 }
