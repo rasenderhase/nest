@@ -2,9 +2,9 @@ package de.nikem.nest.util;
 
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.jstl.core.Config;
@@ -14,16 +14,13 @@ public class Messages {
 	private static final String BASENAMES = "de.nikem.nest.filter.NestFilter.basenames";
 	private Logger log = Logger.getLogger(getClass().getName(), "de.nikem.nest.texts");
 
-	@Inject ServletRequest request;
+	private Supplier<ServletRequest> servletRequestSupplier;
 	
 	public Messages() {
 	}
 	
-	public Messages(ServletRequest request) {
-		this.request = request;
-	}
-
 	public void initLocalizationContext() {
+		final ServletRequest request = getServletRequestSupplier().get();
 		final Locale locale = Locale.GERMAN;			//TODO: LocaleChooser
 			MultipleResourceBundle multipleResourceBundle = new MultipleResourceBundle();
 			multipleResourceBundle.addResourceBundle("de.nikem.nest.texts", locale);
@@ -44,6 +41,7 @@ public class Messages {
 	}
 	
 	public String getMessage(String key, Object...params) {
+		final ServletRequest request = getServletRequestSupplier().get();
 		LocalizationContext locCtxt = (LocalizationContext) Config.get(((HttpServletRequest) request).getSession(false), Config.FMT_LOCALIZATION_CONTEXT);
 		if (locCtxt == null) {
 			locCtxt = (LocalizationContext) Config.get(request, Config.FMT_LOCALIZATION_CONTEXT);
@@ -52,12 +50,11 @@ public class Messages {
 		return MessageFormat.format(message, params);
 	}
 
-	public ServletRequest getRequest() {
-		return request;
+	public Supplier<ServletRequest> getServletRequestSupplier() {
+		return servletRequestSupplier;
 	}
 
-	public Messages setRequest(ServletRequest request) {
-		this.request = request;
-		return this;
+	public void setServletRequestSupplier(Supplier<ServletRequest> servletRequestSupplier) {
+		this.servletRequestSupplier = servletRequestSupplier;
 	}
 }
