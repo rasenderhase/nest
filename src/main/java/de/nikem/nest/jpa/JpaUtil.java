@@ -66,35 +66,36 @@ public class JpaUtil {
 		}
 
 		@Override
-		public T apply(EntityManager con) throws SQLException {
+		public T apply(EntityManager em) throws SQLException {
 			EntityManagerInfo info = threadConnection.get();
 			boolean myTransaction = false;
 			T result;
 			try {
 
 				if (!info.isTransactionActive()) {
-					con.getTransaction().begin();
+					log.fine("Begin Transaction for Thread " + Thread.currentThread().getName());
+					em.getTransaction().begin();
 					info.setTransactionActive(true);
 					myTransaction = true;
 				}
 
-				result = delegate.apply(con);
+				result = delegate.apply(em);
 
 				if (myTransaction) {
-					log.fine("Commit Connection for Thread " + Thread.currentThread().getName());
-					con.getTransaction().commit();
+					log.fine("Commit Transaction for Thread " + Thread.currentThread().getName());
+					em.getTransaction().commit();
 				}
 			} catch (RuntimeException e) {
 				if (myTransaction) {
-					log.fine("Rollback Connection for Thread " + Thread.currentThread().getName());
-					rollback(con.getTransaction());
+					log.fine("Rollback Transaction for Thread " + Thread.currentThread().getName());
+					rollback(em.getTransaction());
 				}
 				log.throwing(getClass().getName(), "doInTransaction", e);
 				throw e;
 			} catch (Exception e) {
 				if (myTransaction) {
-					log.fine("Rollback Connection for Thread " + Thread.currentThread().getName());
-					rollback(con.getTransaction());
+					log.fine("Rollback Transaction for Thread " + Thread.currentThread().getName());
+					rollback(em.getTransaction());
 				}
 				NikemJdbcException ex = new NikemJdbcException(e);
 				log.throwing(getClass().getName(), "doInTransaction", ex);
@@ -103,12 +104,12 @@ public class JpaUtil {
 			return result;
 		}
 
-		public static void rollback(EntityTransaction con) {
-			if (con != null) {
+		public static void rollback(EntityTransaction trans) {
+			if (trans != null) {
 				try {
-					con.rollback();
+					trans.rollback();
 				} catch (PersistenceException e) {
-					log.log(Level.SEVERE, "Connection cannot be rolled back.", e);
+					log.log(Level.SEVERE, "Transaction cannot be rolled back.", e);
 				}
 			}
 		}
