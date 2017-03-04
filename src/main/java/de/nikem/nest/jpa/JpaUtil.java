@@ -10,7 +10,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Persistence;
-import javax.persistence.PersistenceException;
 
 import de.nikem.nest.jdbc.NikemJdbcException;
 
@@ -108,8 +107,8 @@ public class JpaUtil {
 			if (trans != null) {
 				try {
 					trans.rollback();
-				} catch (PersistenceException e) {
-					log.log(Level.SEVERE, "Transaction cannot be rolled back.", e);
+				} catch (Exception e) {
+					log.log(Level.FINE, "Transaction cannot be rolled back.", e);
 				}
 			}
 		}
