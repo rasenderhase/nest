@@ -35,14 +35,7 @@ public class LogoutResource {
 			session.invalidate();
 		}
 
-		String referer = getHttpHeaders().getHeaderString("referer");
-		
-		final URI location;
-		if (referer == null) {
-			location = UriBuilder.fromPath(request.getContextPath()).build();
-		} else {
-			location = UriBuilder.fromUri(referer).build();
-		}
+		final URI location = UriBuilder.fromPath(request.getContextPath()).build();
 		
 		return Response.seeOther(location).build();
 	}
