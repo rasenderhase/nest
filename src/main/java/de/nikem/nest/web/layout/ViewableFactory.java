@@ -32,4 +32,12 @@ public class ViewableFactory {
 		}
 		return new Viewable("/nest/frame", model);
 	}
+	
+	public Object createStandAloneViewable(String templateName) {
+		return createStandAloneViewable(templateName, null);
+	}
+	
+	public Object createStandAloneViewable(String templateName, Object model) {
+		return new Viewable(templateName, model);
+	}
 }
